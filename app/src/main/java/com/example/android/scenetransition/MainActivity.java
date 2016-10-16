@@ -6,10 +6,14 @@ import android.transition.AutoTransition;
 import android.transition.Scene;
 import android.transition.Transition;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.View;
-import android.widget.RelativeLayout;
+import android.widget.FrameLayout;
 
 public class MainActivity extends AppCompatActivity {
+    
+    private View smallMenu;
+    private View largeMenu;
 
 
     @Override
@@ -18,39 +22,40 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         initToggle();
-     }
+    }
 
     private void initToggle() {
 
-        final RelativeLayout sceneBase = (RelativeLayout) findViewById(R.id.toggle);
+        final FrameLayout container = (FrameLayout) findViewById(R.id.container);
 
-        final View scene2closed =  getLayoutInflater().inflate(R.layout.closed, sceneBase, false);
-        final View scene2opened =  getLayoutInflater().inflate(R.layout.opened, sceneBase, false);
+        smallMenu = getLayoutInflater().inflate(R.layout.closed, container, false);
+        largeMenu = getLayoutInflater().inflate(R.layout.opened, container, false);
 
-        final Scene sceneClose = new Scene(sceneBase, scene2closed);
-        sceneClose.enter();
+        final Scene sceneStart = new Scene(container, smallMenu);
+        sceneStart.enter();
 
-        final Scene sceneOpen = new Scene(sceneBase, scene2opened);
-
-        final Transition t = new AutoTransition();
-        t.setDuration(500);
-
-//        final ViewGroup scene2closed = (ViewGroup)mInflater.inflate(R.layout.include_map_select_closed, sceneBase, false);
-//        final Scene sceneClose = new Scene(sceneBase, scene2closed);
-//        sceneClose.enter();
-
-        scene2closed.findViewById(R.id.toggle_scene).setOnClickListener(new View.OnClickListener() {
+       View clickMe = findViewById(R.id.click_me);
+        if (clickMe == null) return;
+        clickMe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TransitionManager.go(sceneOpen, t);
+                View finalView = getContentView();
+                final Scene sceneEnd = new Scene(container, finalView);
+                final Transition t = new AutoTransition();
+                t.setDuration(500);
+                TransitionManager.go(sceneEnd, t);
             }
         });
+    }
 
-        scene2opened.findViewById(R.id.button1).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TransitionManager.go(sceneClose, t);
-            }
-        });
+    private View getContentView() {
+        Log.e("ff", Thread.currentThread().getStackTrace()[2] + "" + smallMenu.isLaidOut());
+        Log.e("ff", Thread.currentThread().getStackTrace()[2] + "" + smallMenu.isShown());
+        Log.e("ff", Thread.currentThread().getStackTrace()[2] + "" + largeMenu.isLaidOut());
+        Log.e("ff", Thread.currentThread().getStackTrace()[2] + "" + largeMenu.isShown());
+        if (smallMenu.isShown())
+            return largeMenu;
+        else
+            return smallMenu;
     }
 }

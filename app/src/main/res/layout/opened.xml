@@ -1,52 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/toggleMapTypes"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+android:background="@android:color/darker_gray">
 
-    <Button
+    <TextView
         android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#03A9F4"
-        android:minHeight="0dip"
-        android:padding="5dip"
-        android:text="button1"
-        android:textAllCaps="false"
-        android:textColor="#ffffff" />
+        android:text="Capture"
+        android:padding="16dp"/>
 
-    <Button
-        android:id="@+id/button2"
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Pick Image"
+        android:padding="16dp"/>
 
-        android:minHeight="0dip"
-        android:padding="5dip"
-        android:text="button2"
-        android:textAllCaps="false"
-        android:textColor="#03A9F4" />
-
-    <Button
-        android:id="@+id/button3"
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#ffffff"
-        android:minHeight="0dip"
-        android:padding="5dip"
-        android:text="button3"
-        android:textAllCaps="false"
-        android:textColor="#03A9F4" />
+        android:text="Sketch"
+        android:padding="16dp"/>
 
-    <Button
-        android:id="@+id/button4"
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#ffffff"
-        android:maxLines="1"
-        android:minHeight="0dip"
-        android:padding="5dip"
-        android:text="button4"
-        android:textAllCaps="false"
-        android:textColor="#03A9F4" />
+        android:text="Diagram"
+        android:padding="16dp"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Maths"
+        android:padding="16dp"/>
 </LinearLayout>
