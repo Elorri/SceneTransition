@@ -11,9 +11,11 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 public class MainActivity extends AppCompatActivity {
-    
+
     private View smallMenu;
     private View largeMenu;
+
+    boolean displayInNewWindow;
 
 
     @Override
@@ -31,21 +33,33 @@ public class MainActivity extends AppCompatActivity {
         smallMenu = getLayoutInflater().inflate(R.layout.closed, container, false);
         largeMenu = getLayoutInflater().inflate(R.layout.opened, container, false);
 
-        final Scene sceneStart = new Scene(container, smallMenu);
-        sceneStart.enter();
-
-       View clickMe = findViewById(R.id.click_me);
+        View clickMe = findViewById(R.id.click_me);
         if (clickMe == null) return;
         clickMe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                View finalView = getContentView();
-                final Scene sceneEnd = new Scene(container, finalView);
+                View finalView = null;
+                Scene finalScene = null;
                 final Transition t = new AutoTransition();
                 t.setDuration(500);
-                TransitionManager.go(sceneEnd, t);
+                if (displayInNewWindow()) {
+                    finalView = getContentView();
+                    finalScene = new Scene(container, finalView);
+                    finalScene.enter(); //Calling this will make final scene text appearing on
+                    // before container has finished resizing.
+                    TransitionManager.go(finalScene, t);//This will make the container.addView no
+                    // need to do it ourselves
+                } else {
+                    finalView = getContentView();
+                    finalScene = new Scene(container, finalView);
+                    TransitionManager.go(finalScene, t);
+                }
             }
         });
+    }
+
+    private boolean displayInNewWindow() {
+        return !displayInNewWindow;
     }
 
     private View getContentView() {
