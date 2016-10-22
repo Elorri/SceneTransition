@@ -6,12 +6,16 @@
     android:orientation="vertical">
 
     <Button
-        android:id="@+id/open"
+        android:id="@+id/click_me"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Open !"
-    android:layout_margin="16dp"/>
+        android:text="Click Me !"
+        android:layout_margin="16dp"/>
 
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 </LinearLayout>
-

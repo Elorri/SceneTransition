@@ -1,100 +1,103 @@
 package com.example.android.scenetransition;
 
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.transition.AutoTransition;
 import android.transition.Scene;
 import android.transition.Transition;
 import android.transition.TransitionManager;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 import android.widget.PopupWindow;
 
 public class MainActivity extends AppCompatActivity {
 
-    private View smallMenu;
-    private View largeMenu;
+    private View viewA;
+    private View viewB;
 
-    boolean displayInNewWindow;
-    private FrameLayout container;
+    private View oldView;
+    private View currentView;
+    private View toggleView;
 
+
+    private PopupWindow popupWindow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        initToggle();
-    }
-
-    private void initToggle() {
-
-        container = new FrameLayout(getApplicationContext());
-
-        smallMenu = getLayoutInflater().inflate(R.layout.closed, container, false);
-        largeMenu = getLayoutInflater().inflate(R.layout.opened, container, false);
-
-        View clickMe = findViewById(R.id.click_me);
-        if (clickMe == null) return;
-        clickMe.setOnClickListener(new View.OnClickListener() {
+        final View openButton= findViewById(R.id.open);
+        openButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                 View finalView = null;
-                if (displayInNewWindow()) {
-                    finalView = getContentView();
-                    PopupWindow pw=createWindow();
-                    setWindowContentView(container, finalView);
-                    show(pw, v);
-                } else {
-                    finalView = getContentView();
-                    setWindowContentView(container, finalView);
-                }
+            public void onClick(View view) {
+                popupWindow = new PopupWindow();
+                popupWindow.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
+                popupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
+                View windowView=View.inflate(view.getContext(), R.layout.window_main, null);
+                popupWindow.setContentView(windowView);
+                popupWindow.setOutsideTouchable(true);
+                popupWindow.setFocusable(true);
+                popupWindow.setBackgroundDrawable(new BitmapDrawable());
+                Rect viewLocation = DialogUtils.locateView(openButton);
+                int x = viewLocation.left;
+                int y = viewLocation.top;
+                popupWindow.showAtLocation(openButton, Gravity.NO_GRAVITY, x , y );
+                initToggle(windowView);
             }
         });
     }
 
-    private void show(PopupWindow popupWindow, View anchor) {
-        Rect anchorLocation = DialogUtils.locateView(anchor);
-        popupWindow.showAtLocation(anchor, Gravity.NO_GRAVITY, anchorLocation.right, anchorLocation.top);
+
+
+    private void initToggle(View view) {
+        final ViewGroup container = (ViewGroup) view.findViewById(R.id.container);
+        viewA = getLayoutInflater().inflate(R.layout.menu_a, container, false);
+        viewB = getLayoutInflater().inflate(R.layout.menu_b, container, false);
+        currentView = viewA;
+
+        final Scene sceneStart = new Scene(container, viewA);
+        sceneStart.enter();
+
+        view.findViewById(R.id.toggle).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toggle(container, getFinalScene());
+            }
+        });
     }
 
-    private PopupWindow createWindow() {
-        PopupWindow popupWindow = new PopupWindow();
+
+    private View getFinalScene() {
+        if (currentView.equals(viewA)) {
+            oldView = currentView;
+            currentView = viewB;
+            return viewB;
+        } else {
+            oldView = currentView;
+            currentView = viewA;
+            return viewA;
+        }
+    }
+
+    private void toggle(View container, View finalView) {
+
+        View screenView = findViewById(android.R.id.content);
+
+
+        popupWindow.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
+        popupWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
+
+        final Transition t = new AutoTransition();
+        t.setDuration(3000);
+        Scene finalScene = new Scene((ViewGroup) container, finalView);
+        TransitionManager.go(finalScene, t);
+
         popupWindow.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
         popupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
-//        popupWindow.setOutsideTouchable(true);
-//        popupWindow.setFocusable(true);
-//        popupWindow.setBackgroundDrawable(new BitmapDrawable());
-        popupWindow.setContentView(container);
-        return popupWindow;
-    }
 
-    private void setWindowContentView(FrameLayout container, View finalView) {
-        Scene finalScene = new Scene(container, finalView);
-        finalScene.enter(); //Calling this will make final scene text appearing on
-        // before container has finished resizing.
-        final Transition t = new AutoTransition();
-        t.setDuration(500);
-        TransitionManager.go(finalScene, t);//This will make the container.addView no
-        // need to do it ourselves
-    }
-
-    private boolean displayInNewWindow() {
-        return !displayInNewWindow;
-    }
-
-    private View getContentView() {
-        Log.e("ff", Thread.currentThread().getStackTrace()[2] + "" + smallMenu.isLaidOut());
-        Log.e("ff", Thread.currentThread().getStackTrace()[2] + "" + smallMenu.isShown());
-        Log.e("ff", Thread.currentThread().getStackTrace()[2] + "" + largeMenu.isLaidOut());
-        Log.e("ff", Thread.currentThread().getStackTrace()[2] + "" + largeMenu.isShown());
-        if (smallMenu.isShown())
-            return largeMenu;
-        else
-            return smallMenu;
     }
 }
