@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
         Log.e("St", Thread.currentThread().getStackTrace()[2] + "getFinalViewCopy()" + getFinalViewCopy());
 
         final Transition t = new AutoTransition();
-        t.setDuration(3000);
+        t.setDuration(500);
 
         Scene finalScene = new Scene((ViewGroup) container, finalView);
         finalScene.enter();
