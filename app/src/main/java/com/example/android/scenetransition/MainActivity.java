@@ -136,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
         t.setDuration(3000);
 
         Scene finalScene = new Scene((ViewGroup) container, finalView);
+        finalScene.enter();
         t.addListener(new Transition.TransitionListener() {
             @Override
             public void onTransitionStart(Transition transition) {
