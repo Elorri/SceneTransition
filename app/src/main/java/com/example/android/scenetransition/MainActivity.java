@@ -111,10 +111,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void toggle(final ViewGroup oldViewContainer, final ViewGroup newViewContainer, View container, View finalView) {
 
+        oldViewContainer.setVisibility(View.INVISIBLE);
         oldViewContainer.removeAllViews();
         oldViewContainer.addView(getOldViewCopy());
         Log.e("St", Thread.currentThread().getStackTrace()[2]+"getOldViewCopy()"+getOldViewCopy());
 
+        newViewContainer.setVisibility(View.INVISIBLE);
         newViewContainer.removeAllViews();
         newViewContainer.addView(getFinalViewCopy());
         Log.e("St", Thread.currentThread().getStackTrace()[2]+"getFinalViewCopy()"+getFinalViewCopy());
