@@ -8,6 +8,7 @@ import android.transition.AutoTransition;
 import android.transition.Scene;
 import android.transition.Transition;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,9 @@ public class MainActivity extends AppCompatActivity {
 
     private View viewA;
     private View viewB;
+    private View viewACopy;
+    private View viewBCopy;
+
 
     private View oldView;
     private View currentView;
@@ -54,9 +58,14 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void initToggle(View view) {
+        final ViewGroup oldViewContainer = (ViewGroup) view.findViewById(R.id.oldViewContainer);
+        final ViewGroup newViewContainer = (ViewGroup) view.findViewById(R.id.newViewContainer);
         final ViewGroup container = (ViewGroup) view.findViewById(R.id.container);
         viewA = getLayoutInflater().inflate(R.layout.menu_a, container, false);
         viewB = getLayoutInflater().inflate(R.layout.menu_b, container, false);
+
+        viewACopy = getLayoutInflater().inflate(R.layout.menu_a, container, false);
+        viewBCopy = getLayoutInflater().inflate(R.layout.menu_b, container, false);
         currentView = viewA;
 
         final Scene sceneStart = new Scene(container, viewA);
@@ -65,13 +74,13 @@ public class MainActivity extends AppCompatActivity {
         view.findViewById(R.id.toggle).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                toggle(container, getFinalScene());
+                toggle(oldViewContainer, newViewContainer, container, getFinalView());
             }
         });
     }
 
 
-    private View getFinalScene() {
+    private View getFinalView() {
         if (currentView.equals(viewA)) {
             oldView = currentView;
             currentView = viewB;
@@ -83,21 +92,66 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void toggle(View container, View finalView) {
+    private View getFinalViewCopy() {
+        if (currentView.equals(viewA)) {
+            return viewBCopy;
+        } else {
+            return viewACopy;
+        }
+    }
 
-        View screenView = findViewById(android.R.id.content);
+    private View getOldViewCopy() {
+        if (currentView.equals(viewA)) {
+            return viewACopy;
+        } else {
+            return viewBCopy;
+        }
+    }
 
 
-        popupWindow.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
-        popupWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
+    private void toggle(final ViewGroup oldViewContainer, final ViewGroup newViewContainer, View container, View finalView) {
+
+        oldViewContainer.removeAllViews();
+        oldViewContainer.addView(getOldViewCopy());
+        Log.e("St", Thread.currentThread().getStackTrace()[2]+"getOldViewCopy()"+getOldViewCopy());
+
+        newViewContainer.removeAllViews();
+        newViewContainer.addView(getFinalViewCopy());
+        Log.e("St", Thread.currentThread().getStackTrace()[2]+"getFinalViewCopy()"+getFinalViewCopy());
 
         final Transition t = new AutoTransition();
         t.setDuration(3000);
         Scene finalScene = new Scene((ViewGroup) container, finalView);
-        TransitionManager.go(finalScene, t);
+                t.addListener(new Transition.TransitionListener() {
+            @Override
+            public void onTransitionStart(Transition transition) {
+                Log.e("St", Thread.currentThread().getStackTrace()[2]+"");
+            }
 
-        popupWindow.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
-        popupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
+            @Override
+            public void onTransitionEnd(Transition transition) {
+                Log.e("St", Thread.currentThread().getStackTrace()[2]+"");
+                oldViewContainer.removeAllViews();
+                newViewContainer.removeAllViews();
+            }
+
+            @Override
+            public void onTransitionCancel(Transition transition) {
+                Log.e("St", Thread.currentThread().getStackTrace()[2]+"");
+            }
+
+            @Override
+            public void onTransitionPause(Transition transition) {
+                Log.e("St", Thread.currentThread().getStackTrace()[2]+"");
+            }
+
+            @Override
+            public void onTransitionResume(Transition transition) {
+                Log.e("St", Thread.currentThread().getStackTrace()[2]+"");
+            }
+        });
+
+        TransitionManager.go(finalScene, t);
 
     }
 }
