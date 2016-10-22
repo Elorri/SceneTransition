@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.transition.AutoTransition;
 import android.transition.Scene;
 import android.transition.Transition;
-import android.transition.TransitionInflater;
 import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.Gravity;
@@ -141,19 +140,12 @@ public class MainActivity extends AppCompatActivity {
         newViewContainer.addView(getFinalViewCopy());
         Log.e("St", Thread.currentThread().getStackTrace()[2] + "getFinalViewCopy()" + getFinalViewCopy());
 
-//        final Transition t = new AutoTransition();
-//        t.setDuration(3000);
-
-        final Transition t = TransitionInflater.from(this).inflateTransition(R.transition.resize);
-
-        t.setDuration(3000);
-
-//        Scene oldScene = new Scene((ViewGroup) container, getOldView());
-//        Log.e("St", Thread.currentThread().getStackTrace()[2] + "currentView" + currentView);
-//        oldScene.exit();
+//        final Transition t = TransitionInflater.from(this).inflateTransition(R.transition.resize);
+        final Transition t = new AutoTransition();
+        t.setDuration(500);
         Scene finalScene = new Scene((ViewGroup) container, finalView);
         Log.e("St", Thread.currentThread().getStackTrace()[2] + "finalView" + finalView);
-        //  finalScene.enter();
+        //finalScene.enter();
         t.addListener(new Transition.TransitionListener() {
             @Override
             public void onTransitionStart(Transition transition) {
